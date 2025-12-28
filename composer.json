@@ -1,0 +1,45 @@
+{
+    "name": "mraminrzn/yii2-aggrid",
+    "description": "AG Grid Server-Side Row Model integration for Yii2",
+    "type": "yii2-extension",
+    "keywords": [
+        "yii2",
+        "ag-grid",
+        "datagrid",
+        "server-side",
+        "extension"
+    ],
+    "license": "MIT",
+    "version": "1.0.1",
+    "authors": [
+        {
+            "name": "Your Name",
+            "email": "your.email@example.com"
+        }
+    ],
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://asset-packagist.org"
+        }
+    ],
+    "require": {
+        "php": ">=7.4",
+        "yiisoft/yii2": "~2.0.14",
+        "bower-asset/jquery": "^3.6",
+        "bower-asset/bootstrap": "^3.4 || ^4.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "yourvendor\\aggrid\\": "src/"
+        }
+    },
+    "extra": {
+        "bootstrap": "yourvendor\\aggrid\\Bootstrap"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true
+        }
+    }
+}
