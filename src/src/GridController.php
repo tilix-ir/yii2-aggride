@@ -7,6 +7,7 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
+use yii\db\ActiveRecord;
 use yii\filters\Cors;
 use yii\filters\ContentNegotiator;
 use mraminrzn\aggrid\AgGridDataProvider;
@@ -56,33 +57,36 @@ class GridController extends Controller
         /** @var Module $module */
         $module = $this->module;
 
-        if (!isset($module->grids[$grid])) {
-            throw new NotFoundHttpException("Grid '{$grid}' not found.");
+        $gridClass = $module->grids[$grid] ?? null;
+        $modelClass = null;
+        if ($gridClass === null) {
+            $modelClass = $this->resolveModelClass($grid);
+            if ($modelClass === null) {
+                throw new NotFoundHttpException("Grid or model '{$grid}' not found.");
+            }
         }
 
         $request = Yii::$app->request;
         $params = $request->isPost ? $request->getBodyParams() : $request->getQueryParams();
 
-        if (!isset($params['startRow']) || !isset($params['endRow'])) {
-            throw new BadRequestHttpException('Missing required parameters: startRow, endRow');
-        }
-
         try {
-            $gridClass = $module->grids[$grid];
-            $gridConfig = Yii::createObject($gridClass);
-            
-            $provider = AgGridDataProvider::fromConfig($gridConfig);
+            if ($gridClass !== null) {
+                $gridConfig = Yii::createObject($gridClass);
+                $provider = AgGridDataProvider::fromConfig($gridConfig);
+            } else {
+                $provider = new AgGridDataProvider($modelClass);
+            }
             $data = $provider->getData($params);
-            
+
             return [
                 'success' => true,
                 'rows' => $data['rows'],
                 'lastRow' => $data['lastRow'],
             ];
-            
+
         } catch (\Exception $e) {
             Yii::error($e->getMessage(), __METHOD__);
-            
+
             return [
                 'success' => false,
                 'error' => YII_DEBUG ? $e->getMessage() : 'An error occurred while fetching data.',
@@ -95,25 +99,32 @@ class GridController extends Controller
         /** @var Module $module */
         $module = $this->module;
 
-        if (!isset($module->grids[$grid])) {
-            throw new NotFoundHttpException("Grid '{$grid}' not found.");
+        $gridClass = $module->grids[$grid] ?? null;
+        $modelClass = null;
+        if ($gridClass === null) {
+            $modelClass = $this->resolveModelClass($grid);
+            if ($modelClass === null) {
+                throw new NotFoundHttpException("Grid or model '{$grid}' not found.");
+            }
         }
 
         try {
-            $gridClass = $module->grids[$grid];
-            $gridConfig = Yii::createObject($gridClass);
-            
-            $provider = AgGridDataProvider::fromConfig($gridConfig);
+            if ($gridClass !== null) {
+                $gridConfig = Yii::createObject($gridClass);
+                $provider = AgGridDataProvider::fromConfig($gridConfig);
+            } else {
+                $provider = new AgGridDataProvider($modelClass);
+            }
             $columns = $provider->getColumns();
-            
+
             return [
                 'success' => true,
                 'columns' => $columns,
             ];
-            
+
         } catch (\Exception $e) {
             Yii::error($e->getMessage(), __METHOD__);
-            
+
             return [
                 'success' => false,
                 'error' => YII_DEBUG ? $e->getMessage() : 'An error occurred.',
@@ -126,8 +137,13 @@ class GridController extends Controller
         /** @var Module $module */
         $module = $this->module;
 
-        if (!isset($module->grids[$grid])) {
-            throw new NotFoundHttpException("Grid '{$grid}' not found.");
+        $gridClass = $module->grids[$grid] ?? null;
+        $modelClass = null;
+        if ($gridClass === null) {
+            $modelClass = $this->resolveModelClass($grid);
+            if ($modelClass === null) {
+                throw new NotFoundHttpException("Grid or model '{$grid}' not found.");
+            }
         }
 
         $request = Yii::$app->request;
@@ -137,10 +153,12 @@ class GridController extends Controller
         $params['endRow'] = PHP_INT_MAX;
 
         try {
-            $gridClass = $module->grids[$grid];
-            $gridConfig = Yii::createObject($gridClass);
-            
-            $provider = AgGridDataProvider::fromConfig($gridConfig);
+            if ($gridClass !== null) {
+                $gridConfig = Yii::createObject($gridClass);
+                $provider = AgGridDataProvider::fromConfig($gridConfig);
+            } else {
+                $provider = new AgGridDataProvider($modelClass);
+            }
             $data = $provider->getData($params);
 
             $filename = $grid . '_export_' . date('Y-m-d_His') . '.csv';
@@ -172,5 +190,45 @@ class GridController extends Controller
             Yii::error($e->getMessage(), __METHOD__);
             throw new \yii\web\ServerErrorHttpException('Export failed.');
         }
+    }
+
+    protected function resolveModelClass(string $name): ?string
+    {
+        $req = Yii::$app->request;
+        $modelParam = $req->get('model');
+        if ($modelParam === null && $req->isPost) {
+            $body = $req->getBodyParams();
+            $modelParam = $body['model'] ?? null;
+        }
+        if ($modelParam && class_exists($modelParam) && is_subclass_of($modelParam, ActiveRecord::class)) {
+            return $modelParam;
+        }
+        $candidates = [];
+        $normalized = $this->normalizeClassName($name);
+        $bases = [
+            'app\\models\\',
+            'common\\models\\',
+            'frontend\\models\\',
+            'backend\\models\\',
+        ];
+        $candidates[] = $normalized;
+        foreach ($bases as $base) {
+            $candidates[] = $base . $normalized;
+        }
+        foreach ($candidates as $class) {
+            if (class_exists($class) && is_subclass_of($class, ActiveRecord::class)) {
+                return $class;
+            }
+        }
+        return null;
+    }
+
+    protected function normalizeClassName(string $name): string
+    {
+        $parts = preg_split('/[_-]/', $name);
+        $parts = array_map(function ($p) {
+            return ucfirst(strtolower($p));
+        }, $parts);
+        return implode('', $parts);
     }
 }
