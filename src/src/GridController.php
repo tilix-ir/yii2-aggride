@@ -1,6 +1,6 @@
 <?php
 
-namespace yourvendor\aggrid\controllers;
+namespace mraminrzn\aggrid\controllers;
 
 use Yii;
 use yii\web\Controller;
@@ -9,8 +9,8 @@ use yii\web\BadRequestHttpException;
 use yii\web\NotFoundHttpException;
 use yii\filters\Cors;
 use yii\filters\ContentNegotiator;
-use yourvendor\aggrid\AgGridDataProvider;
-use yourvendor\aggrid\Module;
+use mraminrzn\aggrid\AgGridDataProvider;
+use mraminrzn\aggrid\Module;
 
 /**
  * Grid Controller

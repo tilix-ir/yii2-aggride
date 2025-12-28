@@ -12,11 +12,11 @@
         }
     ],
     "require": {
-        "yourvendor/yii2-aggrid": "@dev"
+        "mraminrzn/yii2-aggrid": "@dev"
     }
 }
 ```
 
-5. Run: `composer update yourvendor/yii2-aggrid`
+5. Run: `composer update mraminrzn/yii2-aggrid`
 
 Done! 🎉

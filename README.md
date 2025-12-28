@@ -7,7 +7,7 @@ Easy-to-use AG Grid Server-Side Row Model integration for Yii2 framework.
 Install via Composer:
 
 ```bash
-composer require yourvendor/yii2-aggrid
+composer require mraminrzn/yii2-aggrid
 ```
 
 That's it! The extension will auto-register itself via Bootstrap.
@@ -23,7 +23,7 @@ Create a grid class in `app/grids/OrderGrid.php`:
 
 namespace app\grids;
 
-use yourvendor\aggrid\BaseGrid;
+use mraminrzn\aggrid\BaseGrid;
 use app\models\Order;
 use Yii;
 
@@ -77,7 +77,7 @@ Add to your `config/web.php` or `config/main.php`:
 return [
     'modules' => [
         'aggrid' => [
-            'class' => 'yourvendor\aggrid\Module',
+            'class' => 'mraminrzn\aggrid\Module',
             'grids' => [
                 'orders' => 'app\grids\OrderGrid',
                 'products' => 'app\grids\ProductGrid',

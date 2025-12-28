@@ -1,6 +1,6 @@
 <?php
 
-namespace yourvendor\aggrid;
+namespace mraminrzn\aggrid;
 
 use yii\base\Module as BaseModule;
 
@@ -19,7 +19,7 @@ class Module extends BaseModule
         'Access-Control-Max-Age' => 86400,
     ];
     public $enableCsrf = false;
-    public $controllerNamespace = 'yourvendor\aggrid\controllers';
+    public $controllerNamespace = 'mraminrzn\aggrid\controllers';
 
     public function init()
     {

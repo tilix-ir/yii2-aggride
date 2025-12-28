@@ -1,6 +1,6 @@
 <?php
 
-namespace yourvendor\aggrid;
+namespace mraminrzn\aggrid;
 
 use yii\base\BootstrapInterface;
 
@@ -13,7 +13,7 @@ class Bootstrap implements BootstrapInterface
     {
         if (!isset($app->modules['aggrid'])) {
             $app->setModule('aggrid', [
-                'class' => 'yourvendor\aggrid\Module',
+                'class' => 'mraminrzn\aggrid\Module',
             ]);
         }
 

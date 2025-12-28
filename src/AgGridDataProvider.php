@@ -1,6 +1,6 @@
 <?php
 
-namespace yourvendor\aggrid;
+namespace mraminrzn\aggrid;
 
 use Yii;
 use yii\db\ActiveRecord;

@@ -10,7 +10,7 @@
         "extension"
     ],
     "license": "MIT",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "authors": [
         {
             "name": "Your Name",
@@ -31,11 +31,11 @@
     },
     "autoload": {
         "psr-4": {
-            "yourvendor\\aggrid\\": "src/"
+            "mraminrzn\\aggrid\\": "src/"
         }
     },
     "extra": {
-        "bootstrap": "yourvendor\\aggrid\\Bootstrap"
+        "bootstrap": "mraminrzn\\aggrid\\Bootstrap"
     },
     "config": {
         "allow-plugins": {
